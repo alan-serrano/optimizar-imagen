@@ -1,12 +1,33 @@
-    @echo off
-title Ideas Creativas Optimización de imágenes
+@echo off
+title Ideas Creativas Optimizacion de imagenes
 echo.
 echo Script desarrollado por Alan Serrano
-echo Utiliza la aplicación ImageMagick para optimizar imágenes
+echo Utiliza la aplicacion ImageMagick para optimizar imagenes
+endlocal
+
 
 pause
 
-set fileNametoChange=Alan Serrano
+:cambiar_nombre
+
+    set /p cambiarNombre=Desea cambiar y enumerar el nombre de las imagenes? ^(y/n^):
+    
+    IF /i %cambiarNombre% EQU y (
+        setlocal ENABLEDELAYEDEXPANSION
+            set /P fileNametoChange=Elija el nombre de los archivos de imagen, por ejemplo ^(Ideas Creativas^): 
+            set fileNametoChange=!fileNametoChange! 
+            goto :fin_cambiar_nombre
+        endlocal
+    )
+
+    IF /i %cambiarNombre% EQU n (
+        set fileNametoChange=false
+        goto :fin_cambiar_nombre
+    )
+
+    goto :cambiar_nombre
+
+:fin_cambiar_nombre
 
 
 REM Reseteando los nombres
@@ -51,13 +72,16 @@ GOTO :eof
 
     set runOptimizacion=%3
 
-    REM Reseteando los nombres
     IF %runOptimizacion% EQU optimizar (
         IF /i %fileExtension% EQU .jpg (
             mogrify -strip -resize 1750x1600^> -quality 85 -interlace Plane -sampling-factor 4:2:0 -colorspace RGB "%fullName%" -define jpeg:dct-method=float
         )
     )
-    rename "%fullName%" "%fileNameChanged%"
+    
+    REM Reseteando los nombres
+    IF %fileNametoChange% NEQ false (
+        rename "%fullName%" "%fileNameChanged%"
+    )
 
 
 GOTO :eof
