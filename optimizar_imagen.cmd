@@ -11,7 +11,7 @@ pause
 :cambiar_nombre
 
     set /p cambiarNombre=Desea cambiar y enumerar el nombre de las imagenes? ^(y/n^):
-    
+
     IF /i %cambiarNombre% EQU y (
         setlocal ENABLEDELAYEDEXPANSION
             set /P fileNametoChange=Elija el nombre de los archivos de imagen, por ejemplo ^(Ideas Creativas^): 
