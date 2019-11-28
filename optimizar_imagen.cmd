@@ -67,6 +67,10 @@ set PNG_CRUSH=C:\pngcrush\pngcrush
 
 :fin_conversion_a_jpg
 
+IF "%convertir_imagen%" EQU "" (
+    set convertir_imagen=n
+)
+
 REM Reseteando los nombres
 set count=0
 FOR /R "./" %%i IN (*) DO (
