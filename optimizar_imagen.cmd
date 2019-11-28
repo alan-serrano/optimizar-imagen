@@ -1,9 +1,13 @@
 @echo off
-title Ideas Creativas Optimizacion de imagenes
+color 3e
+title IDEAS CREATIVAS - PROCESO DE ARCHIVOS DE IMAGEN
 echo.
-echo Script desarrollado por Alan Serrano
-echo Utiliza la aplicacion ImageMagick para optimizar imagenes
-endlocal
+echo Este script automatiza el proceso de 
+echo redimensionar, optimizar y convertir archivos de imagen
+echo.
+echo Desarrollado por Alan Serrano.
+echo Utiliza las aplicaciones ImageMagick, PNGgrant PNGcrush para manipular imagenes
+echo.
 
 
 pause
@@ -86,6 +90,10 @@ FOR /R "./" %%i IN (*) DO (
         call :subroutine "%%i" %fileNametoChange% true
     )
 )
+
+echo El proceso terminó, puede cerrar la ventana.
+pause
+color 07
 
 GOTO :eof
 
