@@ -1,5 +1,5 @@
 @echo off
-color 3e
+color 1e
 title IDEAS CREATIVAS - PROCESO DE ARCHIVOS DE IMAGEN
 echo.
 echo Este script automatiza el proceso de 
@@ -16,16 +16,21 @@ REM Añadiendo binarios de programas para optimizar las imágenes png
 set PNG_QUANT=C:\pngquant\pngquant
 set PNG_CRUSH=C:\pngcrush\pngcrush
 
+REM Inicializar variables
+set convertir_imagen=n
+
 :cambiar_nombre
 
     set /p cambiarNombre=Desea cambiar y enumerar el nombre de las imagenes? ^(y/n^):
 
     IF /i %cambiarNombre% EQU y (
         setlocal ENABLEDELAYEDEXPANSION
+        (
             set /P fileNametoChange=Elija el nombre de los archivos de imagen, por ejemplo ^(Ideas Creativas^): 
             set fileNametoChange="!fileNametoChange! "
             goto :fin_cambiar_nombre
-        endlocal
+        )
+        
     )
 
     IF /i %cambiarNombre% EQU n (
@@ -73,24 +78,25 @@ IF "%convertir_imagen%" EQU "" (
 
 REM Reseteando los nombres
 set count=0
+set randonNumber=%RANDOM%
 FOR /R "./" %%i IN (*) DO (
-    IF /i %%~xi EQU .jpg (
-        call :subroutine "%%i" namereset false
+    IF /i "%%~xi" EQU ".jpg" (
+        call :subroutine "%%i" "%randonNumber%namereset " false
     )
 
-    IF /i %%~xi EQU .png (
-        call :subroutine "%%i" namereset false
+    IF /i "%%~xi" EQU ".png" (
+        call :subroutine "%%i" "%randonNumber%namereset " false
     )
 )
 
 REM Cambiando Nombre y optimizando los archivos
 set count=0
 FOR /R "./" %%i IN (*) DO (
-    IF /i %%~xi EQU .jpg (
+    IF /i "%%~xi" EQU ".jpg" (
         call :subroutine "%%i" %fileNametoChange% true
     )
 
-    IF /i %%~xi EQU .png (
+    IF /i "%%~xi" EQU ".png" (
         call :subroutine "%%i" %fileNametoChange% true
     )
 )
@@ -121,25 +127,32 @@ GOTO :eof
 
         IF /i %optimizar_imagen% EQU y (
             
-            IF /i %fileExtension% EQU .jpg (
+            IF /i "%fileExtension%" EQU ".jpg" (
                 mogrify -strip -resize 1750x1600^> -quality 81 -interlace Plane -sampling-factor 4:2:0 -colorspace RGB "%fullName%" -define jpeg:dct-method=float
             )
 
             IF /i %convertir_imagen% EQU y (
-                IF /i %fileExtension% EQU .png (
+                IF /i "%fileExtension%" EQU ".png" (
                     REM Convirtiendo
                     mogrify -format jpg -strip -resize 1750x1600^> -quality 81 -interlace Plane -sampling-factor 4:2:0 -colorspace RGB -define jpeg:dct-method=float "%fullName%"
                     del "%fullName%"
 
                     REM Cambiando fullName a jpg
 
-                    set fullName=%filePath%%fileName%.jpg
-                    set fullNameChanged=%fileNameChanged%.jpg
+                    setlocal ENABLEDELAYEDEXPANSION
+                    (
+
+                        set fullName="%filePath%%fileName%.jpg"
+                        set fullName=!fullName:"=!
+                        set fullNameChanged="%fileNameChanged%.jpg"
+                        set fullNameChanged=!fullNameChanged:"=!
+                    )
+                    
                 )
             )
 
             IF /i %convertir_imagen% EQU n (
-                IF /i %fileExtension% EQU .png (
+                IF /i "%fileExtension%" EQU ".png" (
                     mogrify -strip -resize 1750x1600^> "%fullName%"
                     %PNG_QUANT% --quality=45-85 --ext .png --force --strip --skip-if-larger "%fullName%"
                     %PNG_CRUSH% -warn -ow "%fullName%"
